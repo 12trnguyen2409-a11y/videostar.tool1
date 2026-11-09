@@ -1,0 +1,33 @@
+name: Build Tweak
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Theos
+        run: |
+          export THEOS=$HOME/theos
+          git clone --recursive https://github.com/theos/theos.git $THEOS
+          echo "THEOS=$THEOS" >> $GITHUB_ENV
+
+      - name: Install Dependencies
+        run: |
+          brew install ldid xz
+
+      - name: Build Tweak
+        run: |
+          make clean
+          make
+
+      - name: Upload Dylib
+        uses: actions/upload-artifact@v3
+        with:
+          name: VideoStarTool-Dylib
+          path: .theos/obj/debug/*.dylib
