@@ -7,20 +7,27 @@ on:
 
 jobs:
   build:
-    runs-on: macos-13
+    runs-on: macos-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install Theos
+      - name: Install Theos and Dependencies
         run: |
+          # Tải Theos
           export THEOS=$HOME/theos
           git clone --recursive https://github.com/theos/theos.git $THEOS
           echo "THEOS=$THEOS" >> $GITHUB_ENV
 
-      - name: Install Dependencies
-        run: |
-          brew install ldid xz dpkg
+          # Cài ldid trực tiếp (tránh lỗi brew update)
+          curl -L https://github.com/ProcursusTeam/ldid/releases/download/v2.1.5-procursus7/ldid_macosx_x86_64 -o /usr/local/bin/ldid
+          chmod +x /usr/local/bin/ldid
+
+          # Cài dpkg trực tiếp
+          curl -L http://mirrors.kernel.org/ubuntu/pool/main/d/dpkg/dpkg_1.19.0.5ubuntu2_amd64.deb -o dpkg.deb
+          ar x dpkg.deb
+          tar -xf data.tar.xz
+          sudo cp ./usr/bin/dpkg-deb /usr/local/bin/
 
       - name: Build Tweak
         run: |
