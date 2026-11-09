@@ -27,7 +27,7 @@ jobs:
           make
 
       - name: Upload Dylib
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: VideoStarTool-Dylib
           path: .theos/obj/debug/*.dylib
